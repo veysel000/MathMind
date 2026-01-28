@@ -24,10 +24,26 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x ./gradlew
       
-    - name: Build Debug APK
-      run: ./gradlew assembleDebug --info
-      
-    - name: Show where APK is
+    - name: Check project structure
       run: |
-        find . -name "*.apk" -type f -exec ls -la {} \;
-        ls -la app/build/outputs/apk/debug/ || echo "Debug folder not found"
+        echo "=== Project files ==="
+        ls -la
+        echo "=== App directory ==="
+        ls -la app/
+        echo "=== Gradle files ==="
+        ls -la gradle/wrapper/
+      
+    - name: Build with verbose output
+      run: |
+        echo "Starting Gradle build..."
+        ./gradlew assembleDebug --info --stacktrace --no-daemon
+        echo "Build exit code: $?"
+      
+    - name: Find all generated files
+      run: |
+        echo "=== All files in app/build (if exists) ==="
+        find app/build -type f 2>/dev/null || echo "No app/build directory"
+        echo "=== All APK files anywhere ==="
+        find . -name "*.apk" -type f 2>/dev/null || echo "No APK files found"
+        echo "=== All files with 'apk' in name ==="
+        find . -name "*apk*" -type f 2>/dev/null || echo "No files with apk in name"
