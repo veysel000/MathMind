@@ -1,2 +1,2 @@
 # MathMind
-app
+app.
