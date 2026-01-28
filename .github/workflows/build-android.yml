@@ -31,3 +31,4 @@ jobs:
       run: |
         find . -name "*.apk" -type f -exec ls -la {} \;
         ls -la app/build/outputs/apk/debug/ || echo "Debug folder not found"
+c
