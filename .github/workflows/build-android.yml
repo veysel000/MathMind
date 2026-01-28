@@ -3,8 +3,6 @@ name: Build MathMind Android APK
 on:
   push:
     branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
 
 jobs:
   build:
@@ -26,37 +24,10 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x ./gradlew
       
-    - name: Cache Gradle packages
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-          
     - name: Build Debug APK
-      run: ./gradlew assembleDebug
+      run: ./gradlew assembleDebug --info
       
-    - name: List all files after build
+    - name: Show where APK is
       run: |
-        echo "=== Listing all APK files ==="
-        find . -name "*.apk" -type f
-        echo "=== Listing build directory ==="
-        ls -la app/build/ || echo "app/build/ not found"
-        echo "=== Listing outputs directory ==="
-        ls -la app/build/outputs/ || echo "app/build/outputs/ not found"
-        echo "=== Full directory structure ==="
-        find app/ -type f -name "*.apk" || echo "No APK files found in app/"
-      
-    - name: Upload APK (if found)
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: MathMind-Debug-APK
-        path: |
-          app/build/outputs/apk/debug/
-          **/build/outputs/apk/debug/
-          **/*.apk
-        if-no-files-found: warn
+        find . -name "*.apk" -type f -exec ls -la {} \;
+        ls -la app/build/outputs/apk/debug/ || echo "Debug folder not found"
