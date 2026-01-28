@@ -39,14 +39,24 @@ jobs:
     - name: Build Debug APK
       run: ./gradlew assembleDebug
       
-    - name: List build outputs
-      run: find . -name "*.apk" -type f
+    - name: List all files after build
+      run: |
+        echo "=== Listing all APK files ==="
+        find . -name "*.apk" -type f
+        echo "=== Listing build directory ==="
+        ls -la app/build/ || echo "app/build/ not found"
+        echo "=== Listing outputs directory ==="
+        ls -la app/build/outputs/ || echo "app/build/outputs/ not found"
+        echo "=== Full directory structure ==="
+        find app/ -type f -name "*.apk" || echo "No APK files found in app/"
       
-    - name: Upload APK
+    - name: Upload APK (if found)
       uses: actions/upload-artifact@v4
+      if: always()
       with:
         name: MathMind-Debug-APK
         path: |
           app/build/outputs/apk/debug/
           **/build/outputs/apk/debug/
           **/*.apk
+        if-no-files-found: warn
