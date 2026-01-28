@@ -18,13 +18,16 @@ jobs:
         
     - uses: android-actions/setup-android@v3
     
-    - name: Build APK
+    - name: Debug build process
       run: |
         chmod +x ./gradlew
-        ./gradlew assembleDebug
-        
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-debug
-        path: app/build/outputs/apk/debug/app-debug.apk
+        echo "=== Gradle version ==="
+        ./gradlew --version
+        echo "=== Available tasks ==="
+        ./gradlew tasks --all | grep -i assemble
+        echo "=== Starting build with full output ==="
+        ./gradlew assembleDebug --info --stacktrace --no-daemon
+        echo "=== Build completed, checking results ==="
+        ls -la app/ || echo "No app directory"
+        ls -la app/build/ || echo "No app/build directory created"
+        find . -name "*.apk" -type f || echo "No APK files anywhere"
